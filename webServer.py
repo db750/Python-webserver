@@ -39,10 +39,12 @@ def webServer(port=13331):
       #This variable can store the headers you want to send for any valid or invalid request.   What header should be sent for a response that is ok?    
       #Fill in start 
 
-      headers = b"HTTP/1.1 200 OK\r\n"  # This is the response header for a successful request        
+      headers = "HTTP/1.1 200 OK\r\n"  # This is the response header for a successful request        
       #Content-Type is an example on how to send a header as bytes. There are more!
-      outputdata = b"Content-Type: text/html; charset=UTF-8\r\n"
-      outputdata += b"\r\n"  
+      headers += "Content-Type: text/html; charset=UTF-8\r\n"
+      headers += "server: PythonWebServer\r\n"  
+      headers += "Connection: close\r\n"  
+      outputdata = headers.encode()  
 
       #Note that a complete header must end with a blank line, creating the four-byte sequence "\r\n\r\n" Refer to https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html
  
@@ -62,18 +64,21 @@ def webServer(port=13331):
 
       # Fill in end
         
-      connectionSocket.close() #closing the connection socket
-      
+      connectionSocket.close() #closing the connection socket  
     except Exception as e:
       print("Error:", e)  # Debug print for exceptions
       # Send response message for invalid request due to the file not being found (404)
       # Remember the format you used in the try: block!
       #Fill in start
-      headers = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n"
+      headers = "HTTP/1.1 404 Not Found\r\n"
+      headers += "Content-Type: text/html\r\n"
+      headers += "myserver: PythonWebServer\r\n"
+      headers += "Connection: close\r\n\r\n"  
       body = "<html><body><h1>404 Not Found</h1></body></html>"
-      connectionSocket.send((headers + body).encode())  # Send the 404 Not Found response with HTML body
+      
+      response = headers + body  # Send the 404 Not Found response with HTML body
       #Fill in end
-
+      connectionSocket.send(response.encode())
 
       #Close client socket
       #Fill in start
