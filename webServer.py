@@ -1,3 +1,4 @@
+
 # import socket module
 from socket import *
 # In order to terminate the program
@@ -39,12 +40,14 @@ def webServer(port=13331):
       #This variable can store the headers you want to send for any valid or invalid request.   What header should be sent for a response that is ok?    
       #Fill in start 
 
-      headers = "HTTP/1.1 200 OK\r\n"  # This is the response header for a successful request        
+      headers = b"HTTP/1.1 200 OK\r\n"  # This is the response header for a successful request        
       #Content-Type is an example on how to send a header as bytes. There are more!
-      headers += "Content-Type: text/html; charset=UTF-8\r\n"
-      headers += "server: PythonWebServer\r\n"  
-      headers += "Connection: close\r\n"  
-      outputdata = headers.encode()  
+      headers += b"Server: SimplePythonServer\r\n"
+      headers += b"Connection: close\r\n"
+      outputdata = b"Content-Type: text/html; charset=UTF-8\r\n"
+      outputdata += b"\r\n"
+      file_content = f.read()
+      outputdata += file_content.encode()
 
       #Note that a complete header must end with a blank line, creating the four-byte sequence "\r\n\r\n" Refer to https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/TCPSockets.html
  
@@ -64,7 +67,8 @@ def webServer(port=13331):
 
       # Fill in end
         
-      connectionSocket.close() #closing the connection socket  
+      connectionSocket.close() #closing the connection socket
+      
     except Exception as e:
       print("Error:", e)  # Debug print for exceptions
       # Send response message for invalid request due to the file not being found (404)
@@ -72,13 +76,12 @@ def webServer(port=13331):
       #Fill in start
       headers = "HTTP/1.1 404 Not Found\r\n"
       headers += "Content-Type: text/html\r\n"
-      headers += "myserver: PythonWebServer\r\n"
+      headers += "Server: PythonWebServer\r\n"
       headers += "Connection: close\r\n\r\n"  
       body = "<html><body><h1>404 Not Found</h1></body></html>"
-      
-      response = headers + body  # Send the 404 Not Found response with HTML body
+      connectionSocket.send((headers + body).encode())  
       #Fill in end
-      connectionSocket.send(response.encode())
+
 
       #Close client socket
       #Fill in start
